@@ -28,9 +28,15 @@ enemigos = []
 enemigos.append(Enemigo(ANCHO/2,100))
 
 balas = []
+ultima_bala = 0
+tiempo_entre_balas = 100 
 
 def crear_bala():
-    balas.append(Bala(cubo.rect.centerx, cubo.rect.centery))
+    global ultima_bala
+
+    if pygame.time.get_ticks() - ultima_bala > tiempo_entre_balas:
+        balas.append(Bala(cubo.rect.centerx, cubo.rect.centery))
+        ultima_bala= pygame.time.get_ticks()
     
 
 def gestionar_teclas(teclas):
@@ -79,9 +85,20 @@ while jugando and vida > 0:
             print(f'Te queda {vida} vidas')
             enemigos.remove(enemigo)
         
-        if enemigo.y + enemigo.alto > ALTO:
+        if enemigo.y  > ALTO:
             puntos += 1
             enemigos.remove(enemigo)
+        
+        for bala in balas:
+            if pygame.Rect.colliderect(bala.rect, enemigo.rect):
+                enemigo.vida -= 1
+                balas.remove(bala)
+                puntos += 1
+        
+        if enemigo.vida <= 0:
+            enemigos.remove(enemigo) 
+
+        
 
     for bala in balas:
         bala.dibujar(VENTANA)
@@ -91,5 +108,14 @@ while jugando and vida > 0:
     VENTANA.blit(texto_puntos, (20, 50))
 
     pygame.display.update()
+
+pygame.quit()
+
+nombre = input("Introduce tu nombre: ")
+
+with open('puntuaciones.txt', 'a') as archivo:
+    archivo.write(f"{nombre} - {puntos}\n")
+
+
 
 quit()
