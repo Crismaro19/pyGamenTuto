@@ -1,2 +1,4 @@
 cristian - 11
 s - 19
+sa - 0
+si - 40

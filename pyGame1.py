@@ -3,14 +3,20 @@ from personaje import Cubo
 from enemigo import Enemigo
 from bala import Bala
 import random
+import time
 
 pygame.init()
+
+pygame.mixer.init()
 
 ANCHO = 1000
 ALTO = 800
 VENTANA = pygame.display.set_mode([ANCHO, ALTO])
 FPS = 60
 FUENTE = pygame.font.SysFont("Comic Sans", 40)
+SONIDO_DISPARO = pygame.mixer.Sound('media/laser.mp3')
+SONIDO_MUERTE_ENEMIGO = pygame.mixer.Sound('media/enemy_destroy.mp3')
+SONIDO_GAME_OVER = pygame.mixer.Sound('media/nave_destroy.mp3')
 
 jugando = True
 
@@ -37,6 +43,7 @@ def crear_bala():
     if pygame.time.get_ticks() - ultima_bala > tiempo_entre_balas:
         balas.append(Bala(cubo.rect.centerx, cubo.rect.centery))
         ultima_bala= pygame.time.get_ticks()
+        SONIDO_DISPARO.play()
     
 
 def gestionar_teclas(teclas):
@@ -97,6 +104,7 @@ while jugando and vida > 0:
         
         if enemigo.vida <= 0:
             enemigos.remove(enemigo) 
+            SONIDO_MUERTE_ENEMIGO.play()
 
         
 
@@ -108,6 +116,9 @@ while jugando and vida > 0:
     VENTANA.blit(texto_puntos, (20, 50))
 
     pygame.display.update()
+
+SONIDO_GAME_OVER.play()
+time.sleep(.3)
 
 pygame.quit()
 
